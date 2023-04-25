@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="73446714-035e-4e5c-978a-b3c150e4db62" name="local">
+        <fileTransfer rootFolder="/E:/Research" accessType="SFTP" host="lijiaqi404.tpddns.cn" port="22" sshConfigId="fb16519c-cba7-475e-a505-a0d9b710e7b8" sshConfig="1962279338@qq.com@lijiaqi404.tpddns.cn:22 agent" authAgent="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
