@@ -94,17 +94,20 @@ def draw_patch_corresponding_lines(img1_tensor, img1_patches, img2_tensor, img2_
 if __name__ == '__main__':
     vis = visdom.Visdom(env='plot1')
     data = "../Datas/AreialImage/ArchaeologicalSitesDetection/georgia_cleaned_all"
-    model = torch.hub.load('facebookresearch/dinov2', 'dinov2_vitl14')
-    model.cuda()
+    dino_encoder_model = torch.hub.load('facebookresearch/dinov2', 'dinov2_vitl14')
+    dino_encoder_model.cuda()
+    # frozen the pre-trained model
+    for param in dino_encoder_model.parameters():
+        param.requires_grad = False
     dataLoader = archaeological_georgia_biostyle_dataloader.SitesLoader(config.DataLoaderConfig)
     print(len(dataLoader))
     for bing_image, book_image in dataLoader:
         # extract the feature of both image
         bing_image_cuda = bing_image.cuda()
-        bing_patch_feature = model.forward_features(bing_image_cuda)['x_norm_patchtokens']
+        bing_patch_feature = dino_encoder_model.forward_features(bing_image_cuda)['x_norm_patchtokens']
         bing_patch_feature = bing_patch_feature.detach().cpu()
         book_image_cuda = book_image.cuda()
-        book_patch_feature_cuda = model.forward_features(book_image_cuda)
+        book_patch_feature_cuda = dino_encoder_model.forward_features(book_image_cuda)
         book_image_feature_cuda=book_patch_feature_cuda['x_norm_clstoken']
         book_patch_feature_cuda =book_patch_feature_cuda['x_norm_patchtokens']
         book_patch_feature = book_patch_feature_cuda.detach().cpu()
@@ -128,10 +131,11 @@ if __name__ == '__main__':
                                        [x[2] for x in patch_pairs[0]], patch_num)
         sift_algo(bing_image[0], book_image[0])
 
-        # recover the image from embedding
+        # train the AutoEncoder(decoder)
         decoder = Decoder(1024).cuda()
         book_image_recovered = decoder(book_patch_feature_cuda)
 
+        # show the image to Visdom
         bing_image_numpy = bing_image.numpy()
         bing_image_numpy = bing_image_numpy[0]
         vis.image(bing_image_numpy)

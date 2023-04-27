@@ -8,6 +8,14 @@ import platform
 LoggingConfig = dict(
     path="log.txt"
 )
+ModelConfig = dict(
+    imgh=420,
+    imgw=420,
+    lr=4e-6,
+    weight_decay=1e-4,
+    epoch_num=150,
+    scheduler=0.99
+)
 DataLoaderConfig = dict(
     dataset="E:\\Research\\Datas\\AreialImage\\ArchaeologicalSitesDetection\\georgia_cleaned_all",
     transforms=Compose([
@@ -20,9 +28,9 @@ DataLoaderConfig = dict(
         Normalize(mean=(0, 0, 0),
                   std=(255, 255, 255),
                   max_pixel_value=1, always_apply=True),
-        Resize(height=420, width=420)
+        Resize(height=ModelConfig['imgh'], width=ModelConfig['imgw'])
     ]),
-    batch_size=1 if platform.system().lower() == 'windows' else 3,
+    batch_size=2 if platform.system().lower() == 'windows' else 20,
     num_workers=8,
     drop_last=False,  # whether abandon the samples out of batch
     shuffle=True,  # whether to choose the samples in random order
